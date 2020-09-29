@@ -38,7 +38,7 @@
     CGFloat leftx = _animationRect.origin.x + 5;
     CGFloat width = _animationRect.size.width - 10;
     
-    self.frame = CGRectMake(leftx, _animationRect.origin.y + 8, width, 8);
+    self.frame = CGRectMake(leftx, _animationRect.origin.y, width, 70);
     
     self.alpha = 0.0;
     
@@ -57,7 +57,7 @@
         CGFloat leftx = self.animationRect.origin.x + 5;
         CGFloat width = self.animationRect.size.width - 10;
         
-        self.frame = CGRectMake(leftx, self.animationRect.origin.y + self.animationRect.size.height - 8, width, 4);
+        self.frame = CGRectMake(leftx, self.animationRect.origin.y + self.animationRect.size.height - 70, width, 70);
         
     } completion:^(BOOL finished)
      {
@@ -85,7 +85,7 @@
     CGFloat leftx = animationRect.origin.x + 5;
     CGFloat width = animationRect.size.width - 10;
     
-    self.frame = CGRectMake(leftx, centery+2*num, width, 2);
+    self.frame = CGRectMake(leftx, centery+2*num, width, 70);
     self.image = image;
     
     [parentView addSubview:self];
@@ -117,7 +117,7 @@
     {
         num++;
         
-        self.frame = CGRectMake(leftx, centery+2*num, width, 2);
+        self.frame = CGRectMake(leftx, centery+2*num, width, 70);
         
         if (centery+2*num > (CGRectGetMinY(_animationRect) + CGRectGetHeight(_animationRect) - 5 ) )
         {
@@ -126,7 +126,7 @@
     }
     else {
         num --;
-        self.frame = CGRectMake(leftx, centery+2*num, width, 2);
+        self.frame = CGRectMake(leftx, centery+2*num, width, 70);
         if (centery+2*num < (CGRectGetMinY(_animationRect) + 5 ) )
         {
             down = YES;
@@ -152,7 +152,7 @@
         
         [self removeFromSuperview];
     }
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];  
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
 @end

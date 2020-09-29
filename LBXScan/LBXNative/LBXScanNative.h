@@ -36,6 +36,8 @@
 //相机启动完成
 @property (nonatomic, copy) void (^onStarted)(void);
 
+//捕捉到的光线值
+@property (nonatomic, copy) void (^onCaptureBrightnessValue)(float brightnessValue);
 #pragma mark --初始化
 /**
  @brief  初始化采集相机

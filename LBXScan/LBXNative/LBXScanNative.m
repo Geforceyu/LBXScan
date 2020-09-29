@@ -5,7 +5,7 @@
 
 
 
-@interface LBXScanNative()<AVCaptureMetadataOutputObjectsDelegate>
+@interface LBXScanNative()<AVCaptureMetadataOutputObjectsDelegate,AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     BOOL bNeedScanResult;
    
@@ -14,6 +14,7 @@
 @property (assign,nonatomic)AVCaptureDevice * device;
 @property (strong,nonatomic)AVCaptureDeviceInput * input;
 @property (strong,nonatomic)AVCaptureMetadataOutput * output;
+@property (nonatomic, strong) AVCaptureVideoDataOutput *videoOutPut;
 @property (strong,nonatomic)AVCaptureSession * session;
 @property (strong,nonatomic)AVCaptureVideoPreviewLayer * preview;
 
@@ -142,6 +143,8 @@
     _output = [[AVCaptureMetadataOutput alloc]init];
     [_output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
     
+    _videoOutPut = [[AVCaptureVideoDataOutput alloc] init];
+    [_videoOutPut setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
     
     if ( !CGRectEqualToRect(cropRect,CGRectZero) )
     {
@@ -173,6 +176,9 @@
     if ([_session canAddOutput:_output])
     {
         [_session addOutput:_output];
+    }
+    if ([_session canAddOutput:_videoOutPut]) {
+        [_session addOutput:_videoOutPut];
     }
 
     if ([_session canAddOutput:_stillImageOutput])
@@ -276,7 +282,7 @@
 }
 
 - (void)changeScanType:(NSArray*)objType
-{    
+{
     _output.metadataObjectTypes = objType;
 }
 
@@ -349,7 +355,7 @@
     return [_input.device hasTorch];
 }
 
-- (void)setTorch:(BOOL)torch {   
+- (void)setTorch:(BOOL)torch {
     if ([self.input.device hasTorch]) {
         NSError *error = nil;
         if([self.input.device lockForConfiguration:&error])
@@ -437,6 +443,18 @@
     }];
 }
 
+#pragma mark AVCaptureVideoDataOutputSampleBufferDelegate
+- (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
+    
+    CFDictionaryRef metadataDict = CMCopyDictionaryOfAttachments(NULL,sampleBuffer, kCMAttachmentMode_ShouldPropagate);
+    NSDictionary *metadata = [[NSMutableDictionary alloc] initWithDictionary:(__bridge NSDictionary*)metadataDict];
+    CFRelease(metadataDict);
+    NSDictionary *exifMetadata = [[metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary] mutableCopy];
+    float brightnessValue = [[exifMetadata objectForKey:(NSString *)kCGImagePropertyExifBrightnessValue] floatValue];
+    if (self.onCaptureBrightnessValue) {
+        self.onCaptureBrightnessValue(brightnessValue);
+    }
+}
 
 #pragma mark AVCaptureMetadataOutputObjectsDelegate
 - (void)captureOutput2:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
