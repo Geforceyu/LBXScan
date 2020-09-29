@@ -1,6 +1,6 @@
 //
 //
-//  
+//
 //
 //  Created by lbxia on 15/10/21.
 //  Copyright © 2015年 lbxia. All rights reserved.
@@ -157,6 +157,9 @@
                     
                     [weakSelf scanResultWithArray:array];
                 }];
+                [_scanObj setOnCaptureBrightnessValue:^(float brightnessValue) {
+                    [weakSelf onCaptureBrightnessValue:brightnessValue];
+                }];
                 [_scanObj setNeedCaptureImage:_isNeedScanImage];
             }
             [_scanObj startScan];
@@ -188,7 +191,7 @@
                     CGRect cropRect = [LBXScanView getZXingScanRectWithPreView:videoView style:_style];
                                         
                      [_zxingObj setScanRect:cropRect];
-                }               
+                }
             }
             [_zxingObj start];
 #endif
@@ -227,7 +230,9 @@
     
     self.view.backgroundColor = [UIColor clearColor];
 }
-
+- (void)onCaptureBrightnessValue:(float)brightness {
+    
+}
 #ifdef LBXScan_Define_ZBar
 - (zbar_symbol_type_t)zbarTypeWithScanType:(SCANCODETYPE)type
 {
@@ -247,11 +252,11 @@
 //        case SCT_BarEAN13:
 //            return ZBAR_EAN13;
 //            break;
-//            
+//
 //        default:
 //            break;
 //    }
-//    
+//
 //    return (zbar_symbol_type_t)type;
 }
 #endif
@@ -372,7 +377,7 @@
 
 -(void)imagePickerController:(UIImagePickerController*)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    [picker dismissViewControllerAnimated:YES completion:nil];    
+    [picker dismissViewControllerAnimated:YES completion:nil];
     
     __block UIImage* image = [info objectForKey:UIImagePickerControllerEditedImage];
     
